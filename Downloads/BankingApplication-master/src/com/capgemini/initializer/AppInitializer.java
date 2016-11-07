@@ -7,6 +7,7 @@ import com.capgemini.exceptions.InsufficientInitialBalanceException;
 import com.capgemini.exceptions.InvalidAccountNumberException;
 import com.capgemini.exceptions.ServerDowntimeException;
 import com.capgemini.model.Customer;
+import com.capgemini.repository.AccountRepository;
 import com.capgemini.service.AccountService;
 import com.capgemini.service.AccountServiceImpl;
 
@@ -18,6 +19,8 @@ public class AppInitializer {
 
 	private static Scanner sc = new Scanner(System.in);
 	private AccountService accountService;
+	private AccountRepository accountRepository;
+	
 	Customer customer1 = new Customer("Poonam", "Kumari");
 	Customer customer2 = new Customer("Rama", "Devi");
 
@@ -68,18 +71,26 @@ public class AppInitializer {
 	private void depositAmount() throws InvalidAccountNumberException, ServerDowntimeException, InsufficientBalanceException {
 		System.out.println("Please enter your account number : ");
 		int accountNumber = sc.nextInt();
+		if(null!=accountRepository.searchAccount(accountNumber)){
 		System.out.println("Please enter the amount to deposit : ");
 		int amountToDeposit = sc.nextInt();
 		accountService.depositAmount(accountNumber, amountToDeposit);
+		}
+		else
+			throw new InvalidAccountNumberException("Account Number doesn't exist!");
 	}
 
 	private void withdrawAmount()
 			throws InvalidAccountNumberException, InsufficientBalanceException, ServerDowntimeException {
 		System.out.println("Please enter your account number : ");
 		int accountNumber = sc.nextInt();
+		if(accountRepository.searchAccount(accountNumber)!=null){
 		System.out.println("Please enter the amount to withdraw : ");
 		int amountToWithdraw = sc.nextInt();
 		accountService.withdrawAmount(accountNumber, amountToWithdraw);
+		}
+		else
+			throw new InvalidAccountNumberException("Account Number doesn't exist!");
 		}
 
 	private void fundTransfer() throws InvalidAccountNumberException, InsufficientBalanceException {
